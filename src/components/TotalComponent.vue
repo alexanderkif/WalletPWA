@@ -1,0 +1,63 @@
+<template>
+  <div class="record-totals row items-start q-gutter-md">
+    <q-card
+      v-for="wt in walletTotals"
+      :key="wt.wallet"
+      class="total-card"
+      :class="{ 'total-card_negative': wt.total && wt.total < 0 }"
+    >
+      <q-card-section class="q-py-sm">
+        <div class="text-center text-subtitle2">{{ wt.wallet }}</div>
+        <div class="text-center text-subtitle2">{{ wt.total }}</div>
+      </q-card-section>
+    </q-card>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, computed } from 'vue';
+import { useWalletsStore } from 'src/stores/wallets-store';
+import { useRecordStore } from 'src/stores/records-store';
+
+export default defineComponent({
+  name: 'TotalComponent',
+  setup() {
+    const walletsStore = useWalletsStore();
+    const recordStore = useRecordStore();
+
+    const walletTotals = computed(() =>
+      walletsStore.getWallets.map((w) => ({
+        wallet: w.label,
+        total: recordStore.getRecords
+          .map((r) => r.money)
+          .reduce((acc, el) => [...acc, ...el])
+          .filter((r) => r.wallet === w.label)
+          .reduce((acc, r) => {
+            if (r.income) acc += r.income;
+            if (r.expense) acc -= r.expense;
+            return acc;
+          }, 0),
+      }))
+    );
+
+    return {
+      walletsStore,
+      recordStore,
+      walletTotals,
+    };
+  },
+});
+</script>
+
+<style lang="scss">
+.record-totals {
+  .total-card {
+    max-width: 250px;
+    background-color: rgb(222, 255, 222);
+
+    &_negative {
+      background-color: rgb(255, 222, 222);
+    }
+  }
+}
+</style>
