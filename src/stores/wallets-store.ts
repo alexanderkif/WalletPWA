@@ -17,17 +17,7 @@ export const useWalletsStore = defineStore('wallets-store', {
       this.wallets = walletList;
       this.storageWallet();
     },
-    addWallet(walletLabel: string) {
-      // const ids = this.wallets.map((w) => w.id);
-      // let id = 1;
-      // while (ids.includes(id)) {
-      //   id++;
-      // }
-      // const value = new Date()
-      //   .toISOString()
-      //   .split('T')
-      //   .map((el, idx) => (idx ? el.split('.')[0] : el.split('-').join('/')))
-      //   .join(' ');
+    saveWallet(walletLabel: string) {
       if (this.getWallets.map((w) => w.label).includes(walletLabel)) {
         console.log('Error: wallet exists.');
         return;

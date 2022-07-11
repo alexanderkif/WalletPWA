@@ -28,7 +28,6 @@ export const useOperationsStore = defineStore('operations-store', {
         label: operationName,
         category: category,
       };
-      console.log('addOperations', newOperation);
       this.operations.push(newOperation);
       this.storageOperations();
     },

@@ -27,9 +27,11 @@ export interface Money {
 }
 
 export interface Record {
+  id?: number;
   date: string;
   operation: number;
-  description?: string;
+  operationText?: string;
+  category?: string;
   money: Money[];
   [key: string]: string | number | Money[] | undefined;
 }

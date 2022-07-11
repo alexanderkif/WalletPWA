@@ -5,9 +5,7 @@
       :rows="operationsStore.getOperations"
       :columns="columns"
       row-key="value"
-      virtual-scroll
-      v-model:pagination="pagination"
-      :rows-per-page-options="[0]"
+      v-model:pagination="initialPagination"
       no-data-label="No Operations found"
     >
       <template v-slot:body="props">
@@ -60,10 +58,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watchEffect } from 'vue';
 import { Operation } from './models';
 import { useOperationsStore } from 'src/stores/operations-store';
-import { QTableProps } from 'quasar';
+import { LocalStorage, QTableProps } from 'quasar';
 
 const columns: QTableProps['columns'] = [
   {
@@ -118,6 +116,21 @@ export default defineComponent({
       confirmDeleteDialogOpened.value = false;
     };
 
+    const initialPagination = ref<QTableProps['pagination']>({
+      sortBy: 'date',
+      descending: true,
+      page: 1,
+      rowsPerPage:
+        (LocalStorage.getItem('operationsRowsPerPage') as number) || 5,
+    });
+
+    watchEffect(() => {
+      LocalStorage.set(
+        'operationsRowsPerPage',
+        initialPagination.value?.rowsPerPage
+      );
+    });
+
     return {
       confirmDeleteDialogOpened,
       operationsStore,
@@ -126,9 +139,7 @@ export default defineComponent({
       operationToRemove,
       deleteOperation,
       deleteOperationConfirmed,
-      pagination: ref({
-        rowsPerPage: 0,
-      }),
+      initialPagination,
     };
   },
 });

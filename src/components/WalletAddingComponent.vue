@@ -60,7 +60,7 @@ export default defineComponent({
 
     function saveWallet() {
       if (walletName.value.length < 3) return;
-      walletsStore.addWallet(walletName.value);
+      walletsStore.saveWallet(walletName.value);
       walletName.value = '';
       inputWalletNameRef.value?.resetValidation();
       addDialogOpened.value = false;

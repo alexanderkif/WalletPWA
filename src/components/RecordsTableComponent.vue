@@ -1,16 +1,13 @@
 <template>
   <div class="record-table q-pa-md full-width">
     <q-table
+      title="Records"
       :rows="rowsAllFields"
       :columns="columns"
       class="my-sticky-virtscroll-table"
-      virtual-scroll
-      v-model:pagination="pagination"
-      :rows-per-page-options="[0]"
-      :virtual-scroll-sticky-size-start="48"
       row-key="date"
-      title="Records"
       no-data-label="No records found"
+      v-model:pagination="initialPagination"
     >
       <template v-slot:body="props">
         <q-tr :props="props">
@@ -30,7 +27,14 @@
           >
             {{ props.row[walletColumn.name] }}
           </q-td>
-          <q-td key="delete" :props="props">
+          <q-td key="operations" :props="props">
+            <q-btn
+              flat
+              round
+              color="warning"
+              icon="edit"
+              @click="openAddRecordDialog(props.row)"
+            />
             <q-btn
               flat
               round
@@ -66,24 +70,36 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <RecordDialogComponent ref="recordDialog" />
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, getCurrentInstance } from 'vue';
-import { QTableProps } from 'quasar';
+import {
+  defineComponent,
+  computed,
+  ref,
+  getCurrentInstance,
+  watchEffect,
+} from 'vue';
+import { LocalStorage, QTableProps } from 'quasar';
 import { useWalletsStore } from 'src/stores/wallets-store';
 import { useOperationsStore } from 'src/stores/operations-store';
 import { useRecordStore } from 'src/stores/records-store';
 import { Record } from './models';
+import RecordDialogComponent from 'components/RecordDialogComponent.vue';
 
 export default defineComponent({
   name: 'RecordsTableComponent',
+  components: {
+    RecordDialogComponent,
+  },
   setup() {
     const confirmDeleteDialogOpened = ref(false);
     const walletsStore = useWalletsStore();
     const operationsStore = useOperationsStore();
     const recordStore = useRecordStore();
     const recordToRemove = ref<Record>();
+    const recordDialog = ref();
 
     const walletsColumn = computed(() => {
       const columnsToAdd: QTableProps['columns'] = [];
@@ -94,7 +110,7 @@ export default defineComponent({
             {
               name: `i_${w.label}`,
               label: `Inc ${w.label}`,
-              align: 'left',
+              align: 'right',
               field: (row: Record) => row[`i_${w.label}`],
               classes: 'incomeColumn',
               headerStyle: 'background-color: rgb(222, 255, 222);',
@@ -102,7 +118,7 @@ export default defineComponent({
             {
               name: `e_${w.label}`,
               label: `Exp ${w.label}`,
-              align: 'left',
+              align: 'right',
               field: (row: Record) => row[`e_${w.label}`],
               classes: 'expenseColumn',
               headerStyle: 'background-color: rgb(255, 222, 222);',
@@ -139,10 +155,10 @@ export default defineComponent({
       },
       ...walletsColumn.value,
       {
-        name: 'delete',
-        label: 'Delete',
+        name: 'operations',
+        label: 'Operations',
         align: 'center',
-        field: 'delete',
+        field: 'operations',
       },
     ];
 
@@ -150,10 +166,16 @@ export default defineComponent({
       recordToRemove.value = record;
       confirmDeleteDialogOpened.value = true;
     };
+
+    async function openAddRecordDialog(row: Record) {
+      recordDialog.value.openAddRecordDialog(row);
+    }
+
     const instance = getCurrentInstance();
 
     const deleteRecordConfirmed = () => {
-      if (recordToRemove.value) recordStore.removeRecord(recordToRemove.value);
+      if (recordToRemove.value?.id)
+        recordStore.removeRecord(recordToRemove.value.id);
       confirmDeleteDialogOpened.value = false;
       instance?.proxy?.$forceUpdate();
     };
@@ -176,12 +198,24 @@ export default defineComponent({
       });
     });
 
+    const initialPagination = ref<QTableProps['pagination']>({
+      sortBy: 'date',
+      descending: true,
+      page: 1,
+      rowsPerPage: (LocalStorage.getItem('recordsRowsPerPage') as number) || 5,
+    });
+
+    watchEffect(() => {
+      LocalStorage.set(
+        'recordsRowsPerPage',
+        initialPagination.value?.rowsPerPage
+      );
+    });
+
     return {
       columns,
       rowsAllFields,
-      pagination: ref({
-        rowsPerPage: 0,
-      }),
+      initialPagination,
       walletsStore,
       walletsColumn,
       deleteRecord,
@@ -189,6 +223,8 @@ export default defineComponent({
       recordToRemove,
       confirmDeleteDialogOpened,
       recordStore,
+      openAddRecordDialog,
+      recordDialog,
     };
   },
 });
@@ -196,30 +232,6 @@ export default defineComponent({
 
 <style lang="scss">
 .record-table {
-  .my-sticky-virtscroll-table {
-    /* height or max-height is important */
-    height: calc(100vh - 134px);
-
-    .q-table__top,
-    .q-table__bottom,
-    thead tr:first-child th {
-      /* bg color is important for th; just specify one */
-      background-color: #fff;
-    }
-
-    thead tr th {
-      position: sticky;
-      z-index: 1;
-    }
-    /* this will be the loading indicator */
-    thead tr:last-child th {
-      /* height of all previous header rows */
-      top: 48px;
-    }
-    thead tr:first-child th {
-      top: 0;
-    }
-  }
   .incomeColumn {
     background-color: rgb(243, 255, 243);
   }

@@ -17,18 +17,14 @@ export const useRecordStore = defineStore('record-store', {
       this.records = recordsList;
       this.storageRecords();
     },
-    addRecord(record: Record) {
-      console.log('addRecord', record);
-      // const date = new Date()
-      //   .toISOString()
-      //   .split('T')
-      //   .map((el, idx) => (idx ? el.split('.')[0] : el.split('-').join('/')))
-      //   .join(' ');
+    saveRecord(record: Record) {
+      if (!record.id) record.id = +new Date().toISOString().replace(/\D/g, '');
+      else this.removeRecord(record.id);
       this.records.push(record);
       this.storageRecords();
     },
-    removeRecord(record: Record) {
-      this.records = this.records.filter((r) => r !== record);
+    removeRecord(id: number) {
+      this.records = this.records.filter((r) => r.id !== id);
       this.storageRecords();
     },
   },

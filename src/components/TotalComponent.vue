@@ -1,5 +1,7 @@
 <template>
-  <div class="record-totals row items-start q-gutter-md">
+  <div
+    class="record-totals row full-screen justify-end items-start q-gutter-md"
+  >
     <q-card
       v-for="wt in walletTotals"
       :key="wt.wallet"
@@ -30,7 +32,7 @@ export default defineComponent({
         wallet: w.label,
         total: recordStore.getRecords
           .map((r) => r.money)
-          .reduce((acc, el) => [...acc, ...el])
+          .reduce((acc, el) => (el ? [...acc, ...el] : acc), [])
           .filter((r) => r.wallet === w.label)
           .reduce((acc, r) => {
             if (r.income) acc += r.income;

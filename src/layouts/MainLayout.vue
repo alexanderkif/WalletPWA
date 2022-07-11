@@ -22,6 +22,26 @@
         <q-item-label header> Menu </q-item-label>
 
         <NavTab v-for="tab in tabs" :key="tab.label" v-bind="tab" />
+        <!-- <q-item clickable @click="$q.dark.toggle()">
+          <q-item-section avatar>
+            <q-icon
+              :name="$q.dark.isActive ? 'fullscreen_exit' : 'fullscreen'"
+            />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Dark mode</q-item-label>
+          </q-item-section>
+        </q-item> -->
+        <q-item clickable @click="$q.fullscreen.toggle()">
+          <q-item-section avatar>
+            <q-icon
+              :name="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+            />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Fullscreen mode</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -33,6 +53,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+// import { useQuasar } from 'quasar';
 import NavTab from 'components/NavTab.vue';
 
 const tabs = [
@@ -71,6 +92,7 @@ export default defineComponent({
   },
 
   setup() {
+    // const $q = useQuasar();
     const leftDrawerOpen = ref(false);
 
     return {

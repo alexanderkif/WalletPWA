@@ -5,9 +5,7 @@
       :rows="walletsStore.getWallets"
       :columns="columns"
       row-key="value"
-      virtual-scroll
-      v-model:pagination="pagination"
-      :rows-per-page-options="[0]"
+      v-model:pagination="initialPagination"
       no-data-label="No wallets found"
     >
       <template v-slot:body="props">
@@ -67,19 +65,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watchEffect } from 'vue';
 import { Wallet } from './models';
 import { useWalletsStore } from 'src/stores/wallets-store';
-import { QTableProps } from 'quasar';
+import { LocalStorage, QTableProps } from 'quasar';
 
 const columns: QTableProps['columns'] = [
-  // {
-  //   name: 'value',
-  //   required: true,
-  //   label: 'Created',
-  //   align: 'left',
-  //   field: (row: Wallet) => row.value,
-  // },
   {
     name: 'label',
     required: true,
@@ -97,7 +88,7 @@ const columns: QTableProps['columns'] = [
   },
   {
     name: 'hide',
-    label: 'Hide in operations',
+    label: 'Hide in records',
     align: 'left',
     field: (row: Wallet) => row.hide,
   },
@@ -130,6 +121,17 @@ export default defineComponent({
       confirmDeleteDialogOpened.value = false;
     };
 
+    const initialPagination = ref<QTableProps['pagination']>({
+      rowsPerPage: (LocalStorage.getItem('walletsRowsPerPage') as number) || 5,
+    });
+
+    watchEffect(() => {
+      LocalStorage.set(
+        'walletsRowsPerPage',
+        initialPagination.value?.rowsPerPage
+      );
+    });
+
     return {
       confirmDeleteDialogOpened,
       walletsStore,
@@ -138,9 +140,7 @@ export default defineComponent({
       walletToRemove,
       deleteWallet,
       deleteWalletConfirmed,
-      pagination: ref({
-        rowsPerPage: 0,
-      }),
+      initialPagination,
     };
   },
 });

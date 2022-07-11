@@ -114,7 +114,6 @@ export default defineComponent({
 
     watchEffect(async () => {
       if (category.value === 'Add category') {
-        console.log('category.value', category.value);
         addCategoryDialogOpened.value = true;
         await nextTick();
         inputCategoryRef.value?.$el?.focus();
