@@ -1,21 +1,10 @@
-// export interface Todo {
-//   id: number;
-//   content: string;
-// }
-
-// export interface Meta {
-//   totalCount: number;
-// }
-
 export interface Wallet {
-  // value?: string;
   label: string;
   hide?: boolean;
   money?: number;
 }
 
 export interface Operation {
-  value: number;
   label: string;
   category?: string;
 }
@@ -29,11 +18,9 @@ export interface Money {
 export interface Record {
   id?: number;
   date: string;
-  operation: number;
-  operationText?: string;
-  category?: string;
+  operation: Operation;
   money: Money[];
-  [key: string]: string | number | Money[] | undefined;
+  [key: string]: string | number | Money[] | Operation | undefined;
 }
 
 export interface WalletTotal {

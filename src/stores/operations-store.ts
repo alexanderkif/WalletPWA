@@ -17,23 +17,15 @@ export const useOperationsStore = defineStore('operations-store', {
       this.operations = operationsList;
       this.storageOperations();
     },
-    addOperation(operationName: string, category: string) {
-      const ids = this.operations.map((w) => w.value);
-      let id = 1;
-      while (ids.includes(id)) {
-        id++;
-      }
-      const newOperation: Operation = {
-        value: id,
-        label: operationName,
-        category: category,
-      };
-      this.operations.push(newOperation);
+    addOperation(operation: Operation) {
+      this.operations.push(operation);
       this.storageOperations();
     },
     removeOperation(operationToRemove: Operation) {
       this.operations = this.operations.filter(
-        (w) => w.value !== operationToRemove.value
+        (w) =>
+          w.label !== operationToRemove.label &&
+          w.category !== operationToRemove.category
       );
       this.storageOperations();
     },

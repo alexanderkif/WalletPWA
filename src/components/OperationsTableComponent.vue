@@ -10,9 +10,6 @@
     >
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td key="value" :props="props">
-            {{ props.row.value }}
-          </q-td>
           <q-td key="label" :props="props">
             {{ props.row.label }}
           </q-td>
@@ -64,13 +61,6 @@ import { useOperationsStore } from 'src/stores/operations-store';
 import { LocalStorage, QTableProps } from 'quasar';
 
 const columns: QTableProps['columns'] = [
-  {
-    name: 'value',
-    required: true,
-    label: 'Value',
-    align: 'left',
-    field: (row: Operation) => row.value,
-  },
   {
     name: 'label',
     required: true,

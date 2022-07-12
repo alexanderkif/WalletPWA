@@ -48,7 +48,7 @@
         <q-input
           outlined
           disable
-          v-model="operation.category"
+          v-model="category"
           label="Category"
           class="col col-6 q-pl-md"
         />
@@ -69,7 +69,7 @@
           v-model="expense"
           label="Expense"
           class="col col-6 q-pl-md"
-          :rules="[(val) => val == +val || 'Must be number']"
+          :rules="[(val) => !val || val == +val || 'Must be number']"
           hide-bottom-space
         />
       </q-card-section>
@@ -89,7 +89,7 @@
           v-model="income"
           label="Income"
           class="col col-6 q-pl-md"
-          :rules="[(val) => val == +val || 'Must be number']"
+          :rules="[(val) => !val || val == +val || 'Must be number']"
           hide-bottom-space
         />
       </q-card-section>
@@ -103,7 +103,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { QInput } from 'quasar';
 import { useOperationsStore } from 'src/stores/operations-store';
 import { useRecordStore } from 'src/stores/records-store';
@@ -118,7 +118,8 @@ export default defineComponent({
     const walletsStore = useWalletsStore();
 
     const date = ref(new Date().toISOString().split('T')[0]);
-    const operation = ref<Operation>({ value: 0, label: '' });
+    const operation = ref<Operation>();
+    const category = computed(() => operation.value?.category);
     const operations = ref();
     const inputOperationNameRef = ref<QInput>();
 
@@ -137,9 +138,7 @@ export default defineComponent({
     async function openAddRecordDialog(row: Record) {
       record.value = row;
       if (row?.date) date.value = row.date;
-      if (row?.operation) operation.value.value = row.operation;
-      if (row?.operationText) operation.value.label = row.operationText;
-      if (row?.category) operation.value.category = row.category;
+      if (row?.operation) operation.value = row.operation;
       if (row?.money) {
         row.money.map((m) => {
           if (m.hasOwnProperty('income')) {
@@ -187,12 +186,12 @@ export default defineComponent({
       recordStore.saveRecord({
         id: record.value?.id,
         date: date.value,
-        operation: operation.value.value,
+        operation: operation.value,
         money,
       });
       inputOperationNameRef.value?.resetValidation();
       addRecordDialogOpened.value = false;
-      operation.value = { value: 0, label: '' };
+      operation.value = undefined;
       expense.value = 0;
       income.value = 0;
       walletExpense.value = '';
@@ -245,6 +244,7 @@ export default defineComponent({
       date,
       operation,
       operations,
+      category,
       addOperationDialogOpened,
       inputOperationNameRef,
       filterOperationsFn,

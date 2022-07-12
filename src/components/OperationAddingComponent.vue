@@ -130,7 +130,10 @@ export default defineComponent({
 
     function saveOperation() {
       if (operationName.value.length < 3) return;
-      operationsStore.addOperation(operationName.value, category.value);
+      operationsStore.addOperation({
+        label: operationName.value,
+        category: category.value,
+      });
       operationName.value = '';
       inputOperationNameRef.value?.resetValidation();
       addDialogOpened.value = false;

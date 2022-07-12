@@ -6,7 +6,15 @@
       v-for="wt in walletTotals"
       :key="wt.wallet"
       class="total-card"
-      :class="{ 'total-card_negative': wt.total && wt.total < 0 }"
+      :class="
+        $q.dark.isActive
+          ? wt.total && wt.total < 0
+            ? 'total-card--dark_negative'
+            : 'total-card--dark'
+          : wt.total && wt.total < 0
+          ? 'total-card_negative'
+          : 'total-card'
+      "
     >
       <q-card-section class="q-py-sm">
         <div class="text-center text-subtitle2">{{ wt.wallet }}</div>
@@ -20,10 +28,12 @@
 import { defineComponent, computed } from 'vue';
 import { useWalletsStore } from 'src/stores/wallets-store';
 import { useRecordStore } from 'src/stores/records-store';
+import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'TotalComponent',
   setup() {
+    const $q = useQuasar();
     const walletsStore = useWalletsStore();
     const recordStore = useRecordStore();
 
@@ -59,6 +69,14 @@ export default defineComponent({
 
     &_negative {
       background-color: rgb(255, 222, 222);
+    }
+  }
+  .total-card--dark {
+    max-width: 250px;
+    background-color: rgb(0, 73, 0);
+
+    &_negative {
+      background-color: rgb(73, 0, 0);
     }
   }
 }

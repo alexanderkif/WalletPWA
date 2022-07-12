@@ -14,11 +14,11 @@
           <q-td key="date" :props="props">
             {{ props.row.date }}
           </q-td>
-          <q-td key="operationText" :props="props">
-            {{ props.row.operationText }}
+          <q-td key="operation" :props="props">
+            {{ props.row.operation.label }}
           </q-td>
           <q-td key="category" :props="props">
-            {{ props.row.category }}
+            {{ props.row.operation.category }}
           </q-td>
           <q-td
             :key="walletColumn.name"
@@ -81,7 +81,7 @@ import {
   getCurrentInstance,
   watchEffect,
 } from 'vue';
-import { LocalStorage, QTableProps } from 'quasar';
+import { LocalStorage, QTableProps, useQuasar } from 'quasar';
 import { useWalletsStore } from 'src/stores/wallets-store';
 import { useOperationsStore } from 'src/stores/operations-store';
 import { useRecordStore } from 'src/stores/records-store';
@@ -94,9 +94,9 @@ export default defineComponent({
     RecordDialogComponent,
   },
   setup() {
+    const $q = useQuasar();
     const confirmDeleteDialogOpened = ref(false);
     const walletsStore = useWalletsStore();
-    const operationsStore = useOperationsStore();
     const recordStore = useRecordStore();
     const recordToRemove = ref<Record>();
     const recordDialog = ref();
@@ -112,16 +112,16 @@ export default defineComponent({
               label: `Inc ${w.label}`,
               align: 'right',
               field: (row: Record) => row[`i_${w.label}`],
-              classes: 'incomeColumn',
-              headerStyle: 'background-color: rgb(222, 255, 222);',
+              classes: () =>
+                $q.dark.isActive ? 'incomeColumn--dark' : 'incomeColumn',
             },
             {
               name: `e_${w.label}`,
               label: `Exp ${w.label}`,
               align: 'right',
               field: (row: Record) => row[`e_${w.label}`],
-              classes: 'expenseColumn',
-              headerStyle: 'background-color: rgb(255, 222, 222);',
+              classes: () =>
+                $q.dark.isActive ? 'expenseColumn--dark' : 'expenseColumn',
             }
           ),
         ]);
@@ -138,11 +138,11 @@ export default defineComponent({
         field: (row: Record) => row.date,
       },
       {
-        name: 'operationText',
+        name: 'operation',
         required: true,
         label: 'Operation',
         align: 'left',
-        field: (row: Record) => row.operationText,
+        field: (row: Record) => row.operation.label,
         sortable: true,
       },
       {
@@ -189,11 +189,8 @@ export default defineComponent({
             row[`e_${m.wallet}`] = m.expense;
           }
         });
-        const oper = operationsStore.getOperations.find(
-          (op) => row.operation === op.value
-        );
-        row.operationText = oper?.label;
-        row.category = oper?.category;
+        row.operation = row?.operation;
+        row.category = row?.category;
         return row;
       });
     });
@@ -235,8 +232,14 @@ export default defineComponent({
   .incomeColumn {
     background-color: rgb(243, 255, 243);
   }
+  .incomeColumn--dark {
+    background-color: rgb(0, 73, 0);
+  }
   .expenseColumn {
     background-color: rgb(255, 243, 243);
+  }
+  .expenseColumn--dark {
+    background-color: rgb(73, 0, 0);
   }
 }
 </style>
