@@ -10,14 +10,8 @@
     >
       <template v-slot:body="props">
         <q-tr :props="props">
-          <!-- <q-td key="value" :props="props">
-            {{ props.row.value }}
-          </q-td> -->
           <q-td key="label" :props="props">
             {{ props.row.label }}
-          </q-td>
-          <q-td key="money" :props="props">
-            {{ props.row.money }}
           </q-td>
           <q-td key="hide" :props="props">
             <q-checkbox
@@ -79,12 +73,6 @@ const columns: QTableProps['columns'] = [
     field: (row: Wallet) => row.label,
     // format: (val) => `${val}`,
     sortable: true,
-  },
-  {
-    name: 'money',
-    label: 'Money',
-    align: 'left',
-    field: (row: Wallet) => row.money,
   },
   {
     name: 'hide',

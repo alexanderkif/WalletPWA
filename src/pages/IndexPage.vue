@@ -1,7 +1,7 @@
 <template>
   <q-page class="column full-width">
     <RecordAddingComponent class="col-auto q-mt-md" />
-    <TotalComponent class="col-auto q-px-md" />
+    <TotalComponent class="col-auto q-px-md q-mt-none" />
     <RecordsTableComponent />
   </q-page>
 </template>

@@ -22,7 +22,13 @@
         <q-item-label header> Menu </q-item-label>
 
         <NavTab v-for="tab in tabs" :key="tab.label" v-bind="tab" />
-        <q-item clickable @click="$q.dark.toggle()">
+        <q-item
+          clickable
+          @click="
+            $q.dark.toggle();
+            toggleLeftDrawer();
+          "
+        >
           <q-item-section avatar>
             <q-icon :name="$q.dark.isActive ? 'light_mode' : 'dark_mode'" />
           </q-item-section>
@@ -30,7 +36,13 @@
             <q-item-label>Dark mode</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable @click="$q.fullscreen.toggle()">
+        <q-item
+          clickable
+          @click="
+            $q.fullscreen.toggle();
+            toggleLeftDrawer();
+          "
+        >
           <q-item-section avatar>
             <q-icon
               :name="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
@@ -71,9 +83,14 @@ const tabs = [
     to: '/operations',
   },
   {
-    label: 'Wallets Total',
+    label: 'Totals',
     icon: 'savings',
     to: '/total',
+  },
+  {
+    label: 'XSLX backup/restore',
+    icon: 'import_export',
+    to: '/download',
   },
   {
     label: 'About Wallet PWA',

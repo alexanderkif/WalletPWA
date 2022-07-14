@@ -93,6 +93,15 @@
           hide-bottom-space
         />
       </q-card-section>
+      <q-card-section class="row justify-center">
+        <q-input
+          outlined
+          v-model="description"
+          label="Description"
+          class="col col-12"
+          hide-bottom-space
+        />
+      </q-card-section>
 
       <q-card-actions align="right">
         <q-btn flat label="Cancel" color="primary" v-close-popup />
@@ -121,6 +130,7 @@ export default defineComponent({
     const operation = ref<Operation>();
     const category = computed(() => operation.value?.category);
     const operations = ref();
+    const description = ref();
     const inputOperationNameRef = ref<QInput>();
 
     const addRecordDialogOpened = ref(false);
@@ -139,6 +149,7 @@ export default defineComponent({
       record.value = row;
       if (row?.date) date.value = row.date;
       if (row?.operation) operation.value = row.operation;
+      if (row?.description) description.value = row.description;
       if (row?.money) {
         row.money.map((m) => {
           if (m.hasOwnProperty('income')) {
@@ -187,11 +198,13 @@ export default defineComponent({
         id: record.value?.id,
         date: date.value,
         operation: operation.value,
+        description: description.value,
         money,
       });
       inputOperationNameRef.value?.resetValidation();
       addRecordDialogOpened.value = false;
       operation.value = undefined;
+      description.value = undefined;
       expense.value = 0;
       income.value = 0;
       walletExpense.value = '';
@@ -245,6 +258,7 @@ export default defineComponent({
       operation,
       operations,
       category,
+      description,
       addOperationDialogOpened,
       inputOperationNameRef,
       filterOperationsFn,

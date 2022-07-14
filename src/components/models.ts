@@ -1,7 +1,6 @@
 export interface Wallet {
   label: string;
   hide?: boolean;
-  money?: number;
 }
 
 export interface Operation {
@@ -20,6 +19,7 @@ export interface Record {
   date: string;
   operation: Operation;
   money: Money[];
+  description?: string;
   [key: string]: string | number | Money[] | Operation | undefined;
 }
 

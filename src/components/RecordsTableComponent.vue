@@ -27,6 +27,9 @@
           >
             {{ props.row[walletColumn.name] }}
           </q-td>
+          <q-td key="description" :props="props">
+            {{ props.row.description }}
+          </q-td>
           <q-td key="operations" :props="props">
             <q-btn
               flat
@@ -154,6 +157,14 @@ export default defineComponent({
         sortable: true,
       },
       ...walletsColumn.value,
+      {
+        name: 'description',
+        required: true,
+        label: 'Description',
+        align: 'left',
+        field: (row: Record) => row.description,
+        sortable: true,
+      },
       {
         name: 'operations',
         label: 'Operations',
