@@ -23,6 +23,7 @@ import FileSaver from 'file-saver';
 import XlsxPopulate from 'xlsx-populate/browser/xlsx-populate';
 import { useWalletsStore } from 'src/stores/wallets-store';
 import { useOperationsStore } from 'src/stores/operations-store';
+import { useCategoriesStore } from 'src/stores/categories-store';
 import { useRecordStore } from 'src/stores/records-store';
 
 export default defineComponent({
@@ -30,27 +31,34 @@ export default defineComponent({
   setup() {
     const walletsStore = useWalletsStore();
     const operationsStore = useOperationsStore();
+    const сategoriesStore = useCategoriesStore();
     const recordsStore = useRecordStore();
 
-    const exportToExcel = function () {
+    const exportToExcel = function() {
       XlsxPopulate.fromBlankAsync().then(workbook => {
-        const sheet3 = workbook.sheet(0).name('Records');
+        const sheet1 = workbook.sheet(0).name('Records');
         const sheet2 = workbook.addSheet('Operations');
-        const sheet1 = workbook.addSheet('Wallets');
+        const sheet3 = workbook.addSheet('Categories');
+        const sheet4 = workbook.addSheet('Wallets');
 
-        const r1 = sheet1.range(1, 1, walletsStore.getWallets.length + 1, 2);
-        const walletRowHeaders = ['Wallet', 'Hide', 'Money'];
+        const r4 = sheet4.range(1, 1, walletsStore.getWallets.length + 1, 2);
+        const walletRowHeaders = ['Wallet', 'Hide'];
         const walletRows = walletsStore.getWallets.map(w=>[w.label, w.hide ? 1 : 0]);
-        r1.value([walletRowHeaders, ...walletRows]);
+        r4.value([walletRowHeaders, ...walletRows]);
+
+        const r3 = sheet3.range(1, 1, сategoriesStore.getCategories.length + 1, 1);
+        const categoryRowHeaders = ['Category'];
+        const categoryRows = сategoriesStore.getCategories.map(cat=>[cat]);
+        r3.value([categoryRowHeaders, ...categoryRows]);
 
         const r2 = sheet2.range(1, 1, operationsStore.getOperations.length + 1, 2);
         const operationRowHeaders = ['Operation', 'Category'];
         const operationRows = operationsStore.getOperations.map(w=>[w.label, w.category]);
         r2.value([operationRowHeaders, ...operationRows]);
 
-        const r3 = sheet3.range(1, 1, recordsStore.getRecords.length + 1, walletsStore.getWallets.length * 2 + 4);
+        const r1 = sheet1.range(1, 1, recordsStore.getRecords.length + 1, walletsStore.getWallets.length * 2 + 4);
         const walletIncAndExp = walletsStore.getWallets.map(w=>[`Inc ${w.label}`, `Exp ${w.label}`])
-            .reduce((acc, w) => [...acc, ...w], []);
+          .reduce((acc, w) => [...acc, ...w], []);
         const recordRowHeaders = ['Date', 'Operation', 'Category', ...walletIncAndExp, 'Description'];
         const recordRows = recordsStore.getRecords.map(r => {
           const row = [r.date, r.operation.label, r.operation?.category];
@@ -70,11 +78,18 @@ export default defineComponent({
           row.push(r.description);
           return row;
         }).reverse();
-        r3.value([recordRowHeaders, ...recordRows]);
+        r1.value([recordRowHeaders, ...recordRows]);
 
-        // sheet.column('A').width(10).hidden(false);
-        // sheet.column('B').width(10).hidden(true);
-        // sheet.column('C').width(25).hidden(false);
+        sheet1.row(1).style({'bold': true});
+        sheet2.row(1).style({'bold': true});
+        sheet3.row(1).style({'bold': true});
+        sheet4.row(1).style({'bold': true});
+
+        sheet1.column(1).width(13).hidden(false);
+        sheet1.column(2).width(25).hidden(false);
+        sheet1.column(3).width(15).hidden(false);
+        sheet1.column(recordRowHeaders.length).width(25).hidden(false);
+
         // sheet.column('D').width(50).hidden(false);
         // for (let col = 5; col < headers.length; col++) {
         //   sheet.column(col).width(13).hidden(false);
@@ -105,20 +120,52 @@ export default defineComponent({
     const file = ref();
 
     const importFile = function() {
-				if (!file.value) return;
+      if (!file.value) return;
 
-				XlsxPopulate.fromDataAsync(file.value).then((workbook) => {
-					const records = workbook.sheet('Records');
-					const operations = workbook.sheet('Operations');
-					const wallets = workbook.sheet('Wallets');
-          console.log('records', records.name(), records.usedRange().value());
-          console.log('operations', operations.name(), operations.usedRange().value());
-          console.log('wallets', wallets.name(), wallets.usedRange().value());
+      XlsxPopulate.fromDataAsync(file.value).then((workbook) => {
+        const records = workbook.sheet('Records').usedRange().value();
+        const operations = workbook.sheet('Operations');
+        const categories = workbook.sheet('Categories');
+        const wallets = workbook.sheet('Wallets');
 
-				}).catch(err => {
-					window.showToast('Ошибка загрузки. Неверный формат или данные документа.', err);
-				});
-			}
+        const moneyHeaders = records[0].slice(3, records[0].length - 1);
+        const allWallets = Object.keys([...Array(moneyHeaders.length / 2)])
+          .map(i => moneyHeaders[i * 2].slice(4));
+
+        recordsStore.setRecords(
+          records.slice(1).map((r, idx) => {
+            const money = allWallets.map((w, valIdx) => {
+              let resMoney = { wallet: w };
+              if (r[3 + valIdx * 2]) resMoney.income = r[3 + valIdx * 2];
+              if (r[3 + valIdx * 2 + 1]) resMoney.expense = r[3 + valIdx * 2 + 1];
+              return resMoney;
+            })
+            return {
+              id: idx + 1,
+              date: r[0],
+              operation: { label: r[1], category: r[2] },
+              money,
+              description: r[r.length - 1]
+            };
+          })
+        )
+
+        operationsStore.setOperations(
+          operations.usedRange().value().slice(1).map(op => ({ label: op[0], category: op[1] }))
+        )
+
+        сategoriesStore.setCategories(
+          categories.usedRange().value().slice(1).reduce((acc, cat) => [...acc, cat[0]], [])
+        )
+
+        walletsStore.setWallets(
+          wallets.usedRange().value().slice(1).map(w => ({ label: w[0], hide: !!w[1] }))
+        )
+
+      }).catch(err => {
+        window.showToast('Ошибка загрузки. Неверный формат или данные документа.', err);
+      });
+    }
 
     return {
       exportToExcel,

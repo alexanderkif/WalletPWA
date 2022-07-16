@@ -22,7 +22,7 @@ export const useWalletsStore = defineStore('wallets-store', {
         console.log('Error: wallet exists.');
         return;
       }
-      this.wallets.push({ label: walletLabel, hide: false, money: 0 });
+      this.wallets.push({ label: walletLabel, hide: false });
       this.storageWallet();
     },
     removeWallet(wallet: Wallet) {
