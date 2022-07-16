@@ -86,7 +86,6 @@ import {
 } from 'vue';
 import { LocalStorage, QTableProps, useQuasar } from 'quasar';
 import { useWalletsStore } from 'src/stores/wallets-store';
-import { useOperationsStore } from 'src/stores/operations-store';
 import { useRecordStore } from 'src/stores/records-store';
 import { Record } from './models';
 import RecordDialogComponent from 'components/RecordDialogComponent.vue';

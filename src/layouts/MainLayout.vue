@@ -11,7 +11,7 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Wallets PWA </q-toolbar-title>
+        <q-toolbar-title> Wallets </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
@@ -50,6 +50,14 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>Fullscreen mode</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable href="https://www.spinmegame.com" target="blank">
+          <q-item-section avatar>
+            <q-icon name="extension" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Spin me game - Puzzle</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>

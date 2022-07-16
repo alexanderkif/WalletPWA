@@ -1,6 +1,9 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    About
+    <h5 class="q-mx-md">
+      The program is free for personal use. You are responsible for yourself and
+      everything you do.
+    </h5>
   </q-page>
 </template>
 
@@ -9,8 +12,8 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'AboutPage',
-  setup () {
-    return { };
-  }
+  setup() {
+    return {};
+  },
 });
 </script>

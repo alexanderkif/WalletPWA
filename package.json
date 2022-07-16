@@ -1,8 +1,8 @@
 {
-  "name": "walletpwa",
+  "name": "wallets",
   "version": "0.0.1",
   "description": "All wallets in one table",
-  "productName": "Wallet PWA",
+  "productName": "Wallets",
   "author": "alexanderkif <alexander_kif@mail.ru>",
   "private": true,
   "scripts": {

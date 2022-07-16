@@ -28,12 +28,10 @@
 import { defineComponent, computed } from 'vue';
 import { useWalletsStore } from 'src/stores/wallets-store';
 import { useRecordStore } from 'src/stores/records-store';
-import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'TotalComponent',
   setup() {
-    const $q = useQuasar();
     const walletsStore = useWalletsStore();
     const recordStore = useRecordStore();
 

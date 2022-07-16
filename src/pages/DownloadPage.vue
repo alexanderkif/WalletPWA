@@ -1,19 +1,23 @@
 <template>
   <q-page class="fit column items-center justify-evenly">
     <q-btn label="Backup to XLSX" color="positive" @click="exportToExcel" />
-    <q-file
-      color="grey-3"
-      outlined
-      label-color="negative"
-      v-model="file"
-      label="Recovery file"
-      hint="Warning! It rewrite all your data."
-      @update:model-value="importFile"
-    >
-      <template v-slot:append>
-        <q-icon name="attachment" color="negative" />
-      </template>
-    </q-file>
+    <div>
+      <div class="text-negative text-h6">
+        Warning! It will rewrite all your data.
+      </div>
+      <q-file
+        color="grey-3"
+        outlined
+        label-color="negative"
+        v-model="file"
+        label="Recovery file"
+        @update:model-value="importFile"
+      >
+        <template v-slot:append>
+          <q-icon name="attachment" color="negative" />
+        </template>
+      </q-file>
+    </div>
   </q-page>
 </template>
 
