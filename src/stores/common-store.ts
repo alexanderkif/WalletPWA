@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { LocalStorage } from 'quasar';
 
-export const useCommonStore = defineStore('categories-store', {
+export const useCommonStore = defineStore('common-store', {
   state: () => ({
     showTotalOnRecords: (LocalStorage.getItem('showTotalOnRecords') ||
       false) as boolean,
