@@ -96,7 +96,7 @@ const tabs = [
     to: '/total',
   },
   {
-    label: 'XSLX backup/restore',
+    label: 'XLSX backup/restore',
     icon: 'import_export',
     to: '/download',
   },
