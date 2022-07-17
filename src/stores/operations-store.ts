@@ -24,7 +24,7 @@ export const useOperationsStore = defineStore('operations-store', {
     removeOperation(operationToRemove: Operation) {
       this.operations = this.operations.filter(
         (w) =>
-          w.label !== operationToRemove.label &&
+          w.label !== operationToRemove.label ||
           w.category !== operationToRemove.category
       );
       this.storageOperations();
