@@ -57,26 +57,6 @@
         <q-select
           outlined
           class="col col-6"
-          v-model="walletExpense"
-          :options="wallets"
-          label="Wallet expense"
-          use-input
-          input-debounce="0"
-          @filter="filterWalletsFn"
-        />
-        <q-input
-          outlined
-          v-model="expense"
-          label="Expense"
-          class="col col-6 q-pl-md"
-          :rules="[(val) => !val || val == +val || 'Must be number']"
-          hide-bottom-space
-        />
-      </q-card-section>
-      <q-card-section class="row justify-center">
-        <q-select
-          outlined
-          class="col col-6"
           v-model="walletIncome"
           :options="wallets"
           label="Wallet income"
@@ -88,6 +68,26 @@
           outlined
           v-model="income"
           label="Income"
+          class="col col-6 q-pl-md"
+          :rules="[(val) => !val || val == +val || 'Must be number']"
+          hide-bottom-space
+        />
+      </q-card-section>
+      <q-card-section class="row justify-center">
+        <q-select
+          outlined
+          class="col col-6"
+          v-model="walletExpense"
+          :options="wallets"
+          label="Wallet expense"
+          use-input
+          input-debounce="0"
+          @filter="filterWalletsFn"
+        />
+        <q-input
+          outlined
+          v-model="expense"
+          label="Expense"
           class="col col-6 q-pl-md"
           :rules="[(val) => !val || val == +val || 'Must be number']"
           hide-bottom-space
