@@ -1,4 +1,6 @@
-# Wallet PWA (walletpwa)
+# Wallets
+
+### https://alexanderkif.github.io/walletPWA/
 
 My wallets
 
