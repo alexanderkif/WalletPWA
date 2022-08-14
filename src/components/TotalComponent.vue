@@ -1,6 +1,6 @@
 <template>
   <div
-    class="record-totals row full-screen justify-end items-start q-gutter-md"
+    class="record-totals row full-screen justify-start items-start q-gutter-md"
   >
     <q-card
       v-for="wt in walletTotals"
