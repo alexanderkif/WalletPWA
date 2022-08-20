@@ -106,6 +106,7 @@ export default defineComponent({
 
     const columns = computed(() => [
       'Month',
+      'Total',
       ...(categoriesToFilter.value || []),
       ...(operationsToFilter.value?.map((op: Operation) => op.label) || []),
     ]);
@@ -157,12 +158,20 @@ export default defineComponent({
       }));
     };
 
+    const getTotalExpenses = (records: Record[]) => {
+      return records.reduce(
+        (acc, r) => (acc += getAllRecordsWalletsExpense(r)),
+        0
+      );
+    };
+
     const getRow = (month: string) => {
       const records = filteredRecords.value.filter(
         (fr) => fr.date.slice(0, 7) === month
       );
       return [
         { month },
+        { total: getTotalExpenses(records) },
         ...getExpensesByCategories(records),
         ...getExpensesByOperations(records),
       ].reduce((acc, obj) => (acc = { ...acc, ...obj }), {});
