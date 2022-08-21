@@ -9,6 +9,7 @@
     <div class="row justify-center items-start q-gutter-md q-px-md">
       <q-select
         outlined
+        use-chips
         v-model="walletsToFilter"
         multiple
         :options="wallets"
@@ -18,6 +19,7 @@
       />
       <q-select
         outlined
+        use-chips
         v-model="monthsToFilter"
         multiple
         :options="months"
@@ -27,6 +29,7 @@
       />
       <q-select
         outlined
+        use-chips
         v-model="categoriesToFilter"
         multiple
         :options="categories"
@@ -36,6 +39,7 @@
       />
       <q-select
         outlined
+        use-chips
         v-model="operationsToFilter"
         multiple
         :options="operations"
